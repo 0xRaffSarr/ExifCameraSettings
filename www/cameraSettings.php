@@ -8,83 +8,123 @@
 * @return array
 */
 
+class ExifDataRead
+{
+    private $exifIfd0 = null;
+    private $exifExif = null;
 
-function cameraSettings($imagePath) {
+    public function __construc(string $imagePath)
+    {
+        if(empty($imagePath) || !file_exists($imagePath))
+        {
+            exit('File non trovato');
+        }
 
-    // verifica se il file è stato e se esse esiste prima di continuare
-    if ((isset($imagePath)) and (file_exists($imagePath))) {
+        $this->setExifIfd0($imagePath);
+        $this->setExif($imagePath);
+    }
 
-      // Inizializzo le due matrici contenenti le informazioni
-      $exif_ifd0 = exif_read_data($imagePath ,'IFD0' ,0);
-      $exif_exif = exif_read_data($imagePath ,'EXIF' ,0);
+    /**
+     * @param string $imagePath
+     */
+    private function setExifIfd0(string $imagePath)
+    {
+        $this->exifIfd0 = exif_read_data($imagePath ,'IFD0' ,0);
+    }
 
-      //errore di controllo
-      $notFound = "Unavailable";
+    /**
+    * @return array
+    */
+    private function getExifIfd0(): array
+    {
+        return $this->exiexifIfd0;
+    }
 
-      // Produttore
-      if (@array_key_exists('Make', $exif_ifd0)) {
-        $camMake = $exif_ifd0['Make'];
-      } else { $camMake = $notFound; }
+    /**
+     * @param string $imagePath
+     */
+    private function setExif(string $imagePath)
+    {
+        $this->exifExif = exif_read_data($imagePath ,'EXIF' ,0);
+    }
 
-      // Modello
-      if (@array_key_exists('Model', $exif_ifd0)) {
-        $camModel = $exif_ifd0['Model'];
-      } else { $camModel = $notFound; }
+    /**
+    * @return array
+    */
+    private function getExif(): array
+    {
+        return $this->exifExif;
+    }
 
-      // Esposizione
-      if (@array_key_exists('ExposureTime', $exif_ifd0)) {
-        $camExposure = $exif_ifd0['ExposureTime'];
-      } else { $camExposure = $notFound; }
+    function cameraSettings($imagePath) {
 
-      // Apertura
-      if (@array_key_exists('ApertureFNumber', $exif_ifd0['COMPUTED'])) {
-        $camAperture = $exif_ifd0['COMPUTED']['ApertureFNumber'];
-      } else { $camAperture = $notFound; }
+        // verifica se il file è stato e se esse esiste prima di continuare
+        if ((isset($imagePath)) and (file_exists($imagePath))) {
 
-      // Data
-      if (@array_key_exists('DateTime', $exif_ifd0)) {
-        $camDate = $exif_ifd0['DateTime'];
-      } else { $camDate = $notFound; }
+          // Inizializzo le due matrici contenenti le informazioni
+          $exif_ifd0 = exif_read_data($imagePath ,'IFD0' ,0);
+          $exif_exif = exif_read_data($imagePath ,'EXIF' ,0);
 
-      // ISO
-      if (@array_key_exists('ISOSpeedRatings',$exif_exif)) {
-        $camIso = $exif_exif['ISOSpeedRatings'];
-      } else { $camIso = $notFound; }
+          //errore di controllo
+          $notFound = "Unavailable";
 
-      // Copyright
-      if(@array_key_exists('Copyright',$exif_exif)){
-          $phCopyright = $exif_exif['COMPUTED']['Copyright'];
-      } else{ $phCopyright = $notFound; }
+          // Produttore
+          if (@array_key_exists('Make', $exif_ifd0)) {
+            $camMake = $exif_ifd0['Make'];
+          } else { $camMake = $notFound; }
 
-      //Flash
-      if(@array_key_exists('Flash',$exif_exif)){
-          if($exif_exif['Flash'] != 0 && $exif_exif['Flash'] != 16 && $exif_exif['Flash'] != 24 && $exif_exif['Flash'] != 32){
-              $flash = 'Si';
-          } else { $flash = 'No';}
-      }
-      else{ $flash = $notFound; }
+          // Modello
+          if (@array_key_exists('Model', $exif_ifd0)) {
+            $camModel = $exif_ifd0['Model'];
+          } else { $camModel = $notFound; }
 
-      //array di ritorno
-      $return = [];
-      $return['make'] = $camMake;
-      $return['model'] = $camModel;
-      $return['exposure'] = $camExposure;
-      $return['aperture'] = $camAperture;
-      $return['date'] = $camDate;
-      $return['iso'] = $camIso;
-      $return['copyright'] = $phCopyright;
-      $return['flash'] = $flash;
-      return $return;
+          // Esposizione
+          if (@array_key_exists('ExposureTime', $exif_ifd0)) {
+            $camExposure = $exif_ifd0['ExposureTime'];
+          } else { $camExposure = $notFound; }
 
-    } else {
-      return false;
+          // Apertura
+          if (@array_key_exists('ApertureFNumber', $exif_ifd0['COMPUTED'])) {
+            $camAperture = $exif_ifd0['COMPUTED']['ApertureFNumber'];
+          } else { $camAperture = $notFound; }
+
+          // Data
+          if (@array_key_exists('DateTime', $exif_ifd0)) {
+            $camDate = $exif_ifd0['DateTime'];
+          } else { $camDate = $notFound; }
+
+          // ISO
+          if (@array_key_exists('ISOSpeedRatings',$exif_exif)) {
+            $camIso = $exif_exif['ISOSpeedRatings'];
+          } else { $camIso = $notFound; }
+
+          // Copyright
+          if(@array_key_exists('Copyright',$exif_exif)){
+              $phCopyright = $exif_exif['COMPUTED']['Copyright'];
+          } else{ $phCopyright = $notFound; }
+
+          //Flash
+          if(@array_key_exists('Flash',$exif_exif)){
+              if($exif_exif['Flash'] != 0 && $exif_exif['Flash'] != 16 && $exif_exif['Flash'] != 24 && $exif_exif['Flash'] != 32){
+                  $flash = 'Si';
+              } else { $flash = 'No';}
+          }
+          else{ $flash = $notFound; }
+
+          //array di ritorno
+          $return = [];
+          $return['make'] = $camMake;
+          $return['model'] = $camModel;
+          $return['exposure'] = $camExposure;
+          $return['aperture'] = $camAperture;
+          $return['date'] = $camDate;
+          $return['iso'] = $camIso;
+          $return['copyright'] = $phCopyright;
+          $return['flash'] = $flash;
+          return $return;
+
+        } else {
+          return false;
+        }
     }
 }
-?>
-
-
-<?php
-$x = cameraSettings('1.jpg');
-
-echo $x['make']." <br> ".$x['model']." <br> ".$x['exposure']." <br> ".$x['aperture']." <br> ISO: ".$x['iso']." <br> Data: ".$x['date']." <br>Copyright: ".$x['copyright']." <br>Flash: ".$x['flash'];
-?>
