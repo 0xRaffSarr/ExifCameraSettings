@@ -1,11 +1,7 @@
 <?php
 
 /**
-* Questa funzione determina le impostazione della macchina fotografica con cui la foto è stata realizzata.
-* Restituisce un array associativo alle informazioni ricavate
-*
-* @param string
-* @return array
+* Questa classe determina le impostazione della macchina fotografica con cui la foto è stata realizzata.
 */
 
 class ExifDataRead
@@ -69,6 +65,9 @@ class ExifDataRead
         return '---';
     }
 
+    /**
+    * @return string
+    */
     public function getModel(): string
     {
         // Modello
@@ -79,4 +78,93 @@ class ExifDataRead
         return '---';
     }
 
+    /**
+    * @return string
+    */
+    public function getExposureTime(): string
+    {
+        // Esposizione
+        if ($this->getExifIfd0() !== null && @array_key_exists('ExposureTime', $this->getExifIfd0())) {
+          return $this->getExifIfd0()['ExposureTime'];
+        }
+
+        return '---';
+    }
+
+    /**
+    * @return string
+    */
+    public function getApertureFNumber(): string
+    {
+        // Apertura
+        if ($this->getExifIfd0() !== null && @array_key_exists('ApertureFNumber', $this->getExifIfd0()['COMPUTED'])) {
+          return $this->getExifIfd0()['COMPUTED']['ApertureFNumber'];
+        }
+
+        return '---';
+    }
+
+    /**
+    * @return string
+    */
+    public function getDateTime(): string
+    {
+        // Data
+        if ($this->getExifIfd0() !== null && @array_key_exists('DateTime', $this->getExifIfd0())) {
+          return $this->getExifIfd0()['DateTime'];
+        }
+
+        return '---';
+    }
+
+    /**
+    * @return string
+    */
+    public function getIso(): string
+    {
+        // ISO
+        if ($this->getExif() !== null && @array_key_exists('ISOSpeedRatings',$this->getExif())) {
+          return $this->getExif()['ISOSpeedRatings'];
+        }
+
+        return '---';
+    }
+
+    /**
+    * @return string
+    */
+    public function getCopyright(): string
+    {
+        // Copyright
+        if($this->getExifIfd0() !== null && @array_key_exists('Copyright',$this->getExifIfd0())){
+            return $this->getExifIfd0()['Copyright'];
+        }
+
+        return '---';
+    }
+
+    /**
+    * @return int
+    */
+    public function getFlash(): int
+    {
+        if($this->getExif() !== null && @array_key_exists('Flash',$this->getExif())){
+            return $this->getExif()['Flash'];
+        }
+
+        return '---';
+    }
+    /**
+    * @return string
+    */
+    public function getStatusFlash(): string
+    {
+        $flash = $this->getFlash();
+
+        if($flash === 0){
+            return 'Si';
+        }
+
+        return 'No';
+    }
 }
