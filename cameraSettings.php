@@ -1,19 +1,30 @@
 <?php
 
-/**
-* Questa classe determina le impostazione della macchina fotografica con cui la foto è stata realizzata.
-*/
+use xrs\exifData\exception\FileNotFoundException;
 
 class ExifDataRead
 {
     private $exifIfd0 = null;
     private $exifExif = null;
 
+    private const MAKE = 'Make';
+    private const MODEL = 'Model';
+    private const EXPOSURE_TIME = 'ExposureTime';
+    private const DATE_TIME = 'DateTime';
+    private const ISO_SPEED_RATING = 'ISOSpeedRatings';
+    private const COPYRIGHT = 'Copyright';
+    private const FLASH = 'Flash';
+
+    /**
+     * ExifDataRead constructor.
+     * @param string $imagePath
+     * @throws FileNotFoundException
+     */
     public function __construct(string $imagePath)
     {
         if(empty($imagePath) || !file_exists($imagePath))
         {
-            exit ('File non trovato');
+            throw new FileNotFoundException();
         }
 
         $this->setExifIfd0($imagePath);
@@ -57,9 +68,8 @@ class ExifDataRead
     */
     public function getMake(): string
     {
-        // Produttore
-        if ($this->getExifIfd0() !== null && @array_key_exists('Make', $this->getExifIfd0())) {
-          return $this->getExifIfd0()['Make'];
+        if ($this->getExifIfd0() !== null && @array_key_exists(self::MAKE, $this->getExifIfd0())) {
+          return $this->getExifIfd0()[self::MAKE];
         }
 
         return '---';
@@ -71,8 +81,8 @@ class ExifDataRead
     public function getModel(): string
     {
         // Modello
-        if ($this->getExifIfd0() !== null && @array_key_exists('Model', $this->getExifIfd0())) {
-          return $this->getExifIfd0()['Model'];
+        if ($this->getExifIfd0() !== null && @array_key_exists(self::MODEL, $this->getExifIfd0())) {
+          return $this->getExifIfd0()[self::MODEL];
         }
 
         return '---';
@@ -84,8 +94,8 @@ class ExifDataRead
     public function getExposureTime(): string
     {
         // Esposizione
-        if ($this->getExifIfd0() !== null && @array_key_exists('ExposureTime', $this->getExifIfd0())) {
-          return $this->getExifIfd0()['ExposureTime'];
+        if ($this->getExifIfd0() !== null && @array_key_exists(self::EXPOSURE_TIME, $this->getExifIfd0())) {
+          return $this->getExifIfd0()[self::getExposureTime()];
         }
 
         return '---';
@@ -110,8 +120,8 @@ class ExifDataRead
     public function getDateTime(): string
     {
         // Data
-        if ($this->getExifIfd0() !== null && @array_key_exists('DateTime', $this->getExifIfd0())) {
-          return $this->getExifIfd0()['DateTime'];
+        if ($this->getExifIfd0() !== null && @array_key_exists(self::DATE_TIME, $this->getExifIfd0())) {
+          return $this->getExifIfd0()[self::DATE_TIME];
         }
 
         return '---';
@@ -123,8 +133,8 @@ class ExifDataRead
     public function getIso(): string
     {
         // ISO
-        if ($this->getExif() !== null && @array_key_exists('ISOSpeedRatings',$this->getExif())) {
-          return $this->getExif()['ISOSpeedRatings'];
+        if ($this->getExif() !== null && @array_key_exists(self::ISO_SPEED_RATING,$this->getExif())) {
+          return $this->getExif()[self::ISO_SPEED_RATING];
         }
 
         return '---';
@@ -136,8 +146,8 @@ class ExifDataRead
     public function getCopyright(): string
     {
         // Copyright
-        if($this->getExifIfd0() !== null && @array_key_exists('Copyright',$this->getExifIfd0())){
-            return $this->getExifIfd0()['Copyright'];
+        if($this->getExifIfd0() !== null && @array_key_exists(self::COPYRIGHT,$this->getExifIfd0())){
+            return $this->getExifIfd0()[self::COPYRIGHT];
         }
 
         return '---';
@@ -148,23 +158,19 @@ class ExifDataRead
     */
     public function getFlash(): int
     {
-        if($this->getExif() !== null && @array_key_exists('Flash',$this->getExif())){
-            return $this->getExif()['Flash'];
+        if($this->getExif() !== null && @array_key_exists(self::FLASH,$this->getExif())){
+            return $this->getExif()[self::FLASH];
         }
 
         return '---';
     }
     /**
-    * @return string
+    * @return bool
     */
-    public function getStatusFlash(): string
+    public function getStatusFlash(): bool
     {
         $flash = $this->getFlash();
 
-        if($flash === 0){
-            return 'Si';
-        }
-
-        return 'No';
+        return $flash === 0;
     }
 }
