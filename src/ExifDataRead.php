@@ -24,7 +24,7 @@ class ExifDataRead
     {
         if(empty($imagePath) || !file_exists($imagePath))
         {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException($imagePath);
         }
 
         $this->setExifIfd0($imagePath);
